@@ -1,7 +1,13 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:website/responsive/constants.dart';
+import 'package:website/responsive/responsive.dart';
 import 'package:website/responsive/responsive_padding.dart';
+import 'package:website/responsive/responsive_row.dart';
 import 'package:website/theme/colors.dart';
 import 'package:website/theme/theme.dart';
 
@@ -29,8 +35,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const dummyText =
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
+    final isDesktop = Responsive.isDesktop(context);
+    final isTablet = Responsive.isTablet(context);
+
+    const logoWidth = 50.0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -39,19 +47,40 @@ class HomeScreen extends StatelessWidget {
         toolbarHeight: 70,
         forceMaterialTransparency: true,
         elevation: 0,
+        leadingWidth: logoWidth + (isDesktop ? desktopPadding : mobilePadding),
         leading: Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Image.network(
-              'assets/images/logo.png',
-              height: 60,
-            )),
+          padding: EdgeInsets.only(
+            top: 7.5,
+            left: isDesktop ? desktopPadding : mobilePadding,
+          ),
+          child: const FlutterLogo(
+            size: logoWidth,
+          ),
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.only(right: 15),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                js.context.callMethod(
+                  'open',
+                  [
+                    'https://krolmic-dev-files.s3.eu-central-1.amazonaws.com/michal-krol-cv.pdf',
+                  ],
+                );
+              },
+              icon: const Icon(Icons.file_present),
+              label: const Text('Get CV'),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              right: isDesktop ? desktopPadding : mobilePadding,
+            ),
             child: ElevatedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.mail),
-              label: const Text('Contact Me'),
+              label: const Text('Hire Me'),
             ),
           ),
         ],
@@ -83,41 +112,72 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               child: Align(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Professional Mobile and \nMulti-platform App Development',
-                      style:
-                          Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: Colors.white,
-                              ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    AnimatedTextKit(
-                      isRepeatingAnimation: false,
-                      animatedTexts: [
-                        TypewriterAnimatedText(
-                          'Freelance Fullstack Flutter Developer',
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                color: Colors.white,
-                              ),
-                          textAlign: TextAlign.center,
+                child: ResponsivePadding(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'App Development with Flutter and Love',
+                        style:
+                            Theme.of(context).textTheme.headlineLarge!.copyWith(
+                          color: Colors.white,
+                          shadows: [
+                            const Shadow(
+                              blurRadius: 10,
+                              color: Colors.black45,
+                              offset: Offset(5, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      AnimatedTextKit(
+                        isRepeatingAnimation: false,
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            'Michał Król, Freelance Fullstack Flutter Developer',
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(
+                              color: Colors.white,
+                              shadows: [
+                                const Shadow(
+                                  blurRadius: 10,
+                                  color: Colors.black45,
+                                  offset: Offset(5, 5),
+                                )
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.mail, size: 25),
+                        label: const Text('Hire Me'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primarySwatch,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(175, 50),
+                          textStyle:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    fontSize: 25,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             // 1. Reference
             SizedBox(
-              height: 400,
-              child: Row(
+              height: isTablet ? 550 : 400,
+              child: ResponsiveRow(
                 children: [
                   Expanded(
                     flex: 3,
@@ -127,7 +187,23 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello World',
+                            'Current reference #1',
+                            style: Theme.of(context).textTheme.titleSmall,
+                            textAlign: TextAlign.start,
+                          )
+                              .animate()
+                              .fadeIn(
+                                delay: const Duration(milliseconds: 1100),
+                              )
+                              .moveX(
+                                begin: -1000,
+                                end: 0,
+                                delay: const Duration(milliseconds: 1100),
+                                curve: Curves.fastLinearToSlowEaseIn,
+                                duration: const Duration(milliseconds: 1000),
+                              ),
+                          Text(
+                            'LKW.APP',
                             style: Theme.of(context).textTheme.headlineMedium,
                             textAlign: TextAlign.start,
                           )
@@ -144,9 +220,13 @@ class HomeScreen extends StatelessWidget {
                               ),
                           const SizedBox(height: 10),
                           Text(
-                            dummyText,
+                            'Check out LKW.app - my recent highlight I had the pleasure to develop, a mobile application designed to streamline logistics operations. '
+                            "Now we're all ears for your feedback in surveys too, so it will get even better. Recently I've spiced it up with cool features like in-app purchases and a shiny new PRO version."
+                            "You're not a truck driver yet? No time to waste, download the app and get on the road! 🚀",
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.start,
+                            maxLines: 5,
+                            overflow: TextOverflow.ellipsis,
                           )
                               .animate()
                               .fadeIn(
@@ -181,8 +261,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Align(
                           child: Image.network(
-                            'assets/images/mockups.png',
-                            // height: 450,
+                            'assets/images/lkw-app-mockups.png',
+                            height: 400,
                             fit: BoxFit.fitHeight,
                           )
                               .animate()
@@ -205,8 +285,9 @@ class HomeScreen extends StatelessWidget {
             ),
             // 2. Reference
             SizedBox(
-              height: 400,
-              child: Row(
+              height: isTablet ? 550 : 400,
+              child: ResponsiveRow(
+                reverseChildrenOnTablet: true,
                 children: [
                   Expanded(
                     flex: 4,
@@ -226,8 +307,9 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Align(
                           child: Image.network(
-                            'assets/images/mockups.png',
+                            'assets/images/lumeus-mockups.png',
                             height: 400,
+                            fit: BoxFit.fitHeight,
                           )
                               .animate()
                               .fadeIn(
@@ -252,7 +334,23 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello World',
+                            'Current reference #2',
+                            style: Theme.of(context).textTheme.titleSmall,
+                            textAlign: TextAlign.start,
+                          )
+                              .animate()
+                              .fadeIn(
+                                delay: const Duration(milliseconds: 1100),
+                              )
+                              .moveX(
+                                begin: 1000,
+                                end: 0,
+                                delay: const Duration(milliseconds: 1100),
+                                curve: Curves.fastLinearToSlowEaseIn,
+                                duration: const Duration(milliseconds: 1000),
+                              ),
+                          Text(
+                            'Lumeus-App',
                             style: Theme.of(context).textTheme.headlineMedium,
                             textAlign: TextAlign.start,
                           ).animate().moveX(
@@ -264,9 +362,17 @@ class HomeScreen extends StatelessWidget {
                               ),
                           const SizedBox(height: 10),
                           Text(
-                            dummyText,
+                            'Lumeus, written from scratch with Flutter, '
+                            'brings heart-centered meditation following the Herzog method to your fingertips. '
+                            'Accomplish daily sessions with soothing voiceovers and background music recorded by a real orchesta to '
+                            'help you and leave mental issues like depressions and anxiety behind. '
+                            'Track your progress and unlock premium features for an extra boost. '
+                            "Join our supportive community and find peace amidst life's chaos. "
+                            "Ready to dive in? Let's spread some good vibes together! 🌟",
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.start,
+                            maxLines: 5,
+                            overflow: TextOverflow.ellipsis,
                           )
                               .animate()
                               .fadeIn(
