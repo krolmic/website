@@ -1,10 +1,8 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:js' as js;
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:website/responsive/constants.dart';
 import 'package:website/responsive/responsive.dart';
 import 'package:website/responsive/responsive_padding.dart';
@@ -63,11 +61,11 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 15),
             child: ElevatedButton.icon(
               onPressed: () {
-                js.context.callMethod(
-                  'open',
-                  [
+                launchUrl(
+                  Uri.parse(
                     'https://krolmic-dev-files.s3.eu-central-1.amazonaws.com/michal-krol-cv.pdf',
-                  ],
+                  ),
+                  webOnlyWindowName: '_blank',
                 );
               },
               icon: const Icon(Icons.file_present),
