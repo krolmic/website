@@ -3,6 +3,7 @@ import 'dart:js' as js;
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:website/responsive/constants.dart';
 import 'package:website/responsive/responsive.dart';
@@ -102,77 +103,9 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              height: 450,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage('assets/images/header_image.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Align(
-                child: ResponsivePadding(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'App Development with Flutter and Love',
-                        style:
-                            Theme.of(context).textTheme.headlineLarge!.copyWith(
-                          color: Colors.white,
-                          shadows: [
-                            const Shadow(
-                              blurRadius: 10,
-                              color: Colors.black45,
-                              offset: Offset(5, 5),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      AnimatedTextKit(
-                        isRepeatingAnimation: false,
-                        animatedTexts: [
-                          TypewriterAnimatedText(
-                            'Michał Król, Freelance Fullstack Flutter Developer',
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .headlineSmall!
-                                .copyWith(
-                              color: Colors.white,
-                              shadows: [
-                                const Shadow(
-                                  blurRadius: 10,
-                                  color: Colors.black45,
-                                  offset: Offset(5, 5),
-                                )
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.mail, size: 25),
-                        label: const Text('Hire Me'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primarySwatch,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(175, 50),
-                          textStyle:
-                              Theme.of(context).textTheme.labelLarge!.copyWith(
-                                    fontSize: 25,
-                                  ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            const SizedBox(
+              height: HomeScreenHeader.backgroundImageHeight,
+              child: HomeScreenHeader(),
             ),
             // 1. Reference
             SizedBox(
@@ -395,6 +328,257 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class HomeScreenHeader extends StatelessWidget {
+  const HomeScreenHeader({
+    super.key,
+  });
+
+  static const backgroundImageHeight = 450.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: Stack(
+        children: [
+          _buildParallaxBackground(context),
+          _buildContent(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParallaxBackground(BuildContext context) {
+    return Parallax(
+      background: Image.network(
+        'assets/images/header_image.jpg',
+        fit: BoxFit.cover,
+        height: backgroundImageHeight,
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Align(
+      child: ResponsivePadding(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'App Development with Flutter and Love',
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                color: Colors.white,
+                shadows: [
+                  const Shadow(
+                    blurRadius: 10,
+                    color: Colors.black45,
+                    offset: Offset(5, 5),
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            AnimatedTextKit(
+              isRepeatingAnimation: false,
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  'Michał Król, Freelance Fullstack Flutter Developer',
+                  textStyle:
+                      Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    color: Colors.white,
+                    shadows: [
+                      const Shadow(
+                        blurRadius: 10,
+                        color: Colors.black45,
+                        offset: Offset(5, 5),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.mail, size: 25),
+              label: const Text('Hire Me'),
+              style: ElevatedButton.styleFrom(
+                elevation: 10,
+                backgroundColor: primarySwatch,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(175, 50),
+                textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontSize: 23,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ParallaxFlowDelegate extends FlowDelegate {
+  ParallaxFlowDelegate({
+    required this.scrollable,
+    required this.listItemContext,
+    required this.backgroundImageKey,
+  }) : super(repaint: scrollable.position);
+
+  final ScrollableState scrollable;
+  final BuildContext listItemContext;
+  final GlobalKey backgroundImageKey;
+
+  @override
+  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
+    return BoxConstraints.tightFor(
+      width: constraints.maxWidth,
+    );
+  }
+
+  @override
+  void paintChildren(FlowPaintingContext context) {
+    final scrollableBox = scrollable.context.findRenderObject()! as RenderBox;
+    final listItemBox = listItemContext.findRenderObject()! as RenderBox;
+    final listItemOffset = listItemBox.localToGlobal(
+      listItemBox.size.centerLeft(Offset.zero),
+      ancestor: scrollableBox,
+    );
+
+    final viewportDimension = scrollable.position.viewportDimension;
+    final scrollFraction =
+        (listItemOffset.dy / viewportDimension).clamp(0.0, 1.0);
+
+    final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);
+
+    final backgroundSize =
+        (backgroundImageKey.currentContext!.findRenderObject()! as RenderBox)
+            .size;
+    final listItemSize = context.size;
+    final childRect =
+        verticalAlignment.inscribe(backgroundSize, Offset.zero & listItemSize);
+
+    context.paintChild(
+      0,
+      transform:
+          Transform.translate(offset: Offset(0, childRect.top)).transform,
+    );
+  }
+
+  @override
+  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) {
+    return scrollable != oldDelegate.scrollable ||
+        listItemContext != oldDelegate.listItemContext ||
+        backgroundImageKey != oldDelegate.backgroundImageKey;
+  }
+}
+
+class Parallax extends SingleChildRenderObjectWidget {
+  const Parallax({
+    required Widget background,
+    super.key,
+  }) : super(child: background);
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return RenderParallax(scrollable: Scrollable.of(context));
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant RenderParallax renderObject,
+  ) {
+    renderObject.scrollable = Scrollable.of(context);
+  }
+}
+
+class ParallaxParentData extends ContainerBoxParentData<RenderBox> {}
+
+class RenderParallax extends RenderBox
+    with RenderObjectWithChildMixin<RenderBox>, RenderProxyBoxMixin {
+  RenderParallax({
+    required ScrollableState scrollable,
+  }) : _scrollable = scrollable;
+
+  ScrollableState _scrollable;
+
+  ScrollableState get scrollable => _scrollable;
+
+  set scrollable(ScrollableState value) {
+    if (value != _scrollable) {
+      if (attached) {
+        _scrollable.position.removeListener(markNeedsLayout);
+      }
+      _scrollable = value;
+      if (attached) {
+        _scrollable.position.addListener(markNeedsLayout);
+      }
+    }
+  }
+
+  @override
+  void attach(covariant PipelineOwner owner) {
+    super.attach(owner);
+    _scrollable.position.addListener(markNeedsLayout);
+  }
+
+  @override
+  void detach() {
+    _scrollable.position.removeListener(markNeedsLayout);
+    super.detach();
+  }
+
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! ParallaxParentData) {
+      child.parentData = ParallaxParentData();
+    }
+  }
+
+  @override
+  void performLayout() {
+    size = constraints.biggest;
+
+    final background = child!;
+    final backgroundImageConstraints =
+        BoxConstraints.tightFor(width: size.width);
+    background.layout(backgroundImageConstraints, parentUsesSize: true);
+
+    (background.parentData! as ParallaxParentData).offset = Offset.zero;
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final viewportDimension = scrollable.position.viewportDimension;
+
+    final scrollableBox = scrollable.context.findRenderObject()! as RenderBox;
+    final backgroundOffset =
+        localToGlobal(size.centerLeft(Offset.zero), ancestor: scrollableBox);
+
+    final scrollFraction =
+        (backgroundOffset.dy / viewportDimension).clamp(0.0, 1.0);
+
+    final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);
+
+    final background = child!;
+    final backgroundSize = background.size;
+    final listItemSize = size;
+    final childRect =
+        verticalAlignment.inscribe(backgroundSize, Offset.zero & listItemSize);
+
+    context.paintChild(
+      background,
+      (background.parentData! as ParallaxParentData).offset +
+          offset +
+          Offset(0, childRect.top),
     );
   }
 }
