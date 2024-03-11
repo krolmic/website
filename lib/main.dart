@@ -119,7 +119,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Current reference #1',
-                            style: Theme.of(context).textTheme.titleSmall,
+                            style: Theme.of(context).textTheme.titleMedium,
                             textAlign: TextAlign.start,
                           )
                               .animate()
@@ -135,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                           Text(
                             'LKW.APP',
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style: Theme.of(context).textTheme.headlineLarge,
                             textAlign: TextAlign.start,
                           )
                               .animate()
@@ -154,7 +154,7 @@ class HomeScreen extends StatelessWidget {
                             'Check out LKW.app - my recent highlight I had the pleasure to develop, a mobile application designed to streamline logistics operations. '
                             "Now we're all ears for your feedback in surveys too, so it will get even better. Recently I've spiced it up with cool features like in-app purchases and a shiny new PRO version."
                             "You're not a truck driver yet? No time to waste, download the app and get on the road! 🚀",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.start,
                             maxLines: 5,
                             overflow: TextOverflow.ellipsis,
@@ -266,7 +266,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Current reference #2',
-                            style: Theme.of(context).textTheme.titleSmall,
+                            style: Theme.of(context).textTheme.titleMedium,
                             textAlign: TextAlign.start,
                           )
                               .animate()
@@ -282,7 +282,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                           Text(
                             'Lumeus-App',
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style: Theme.of(context).textTheme.headlineLarge,
                             textAlign: TextAlign.start,
                           ).animate().moveX(
                                 begin: 1000,
@@ -300,7 +300,7 @@ class HomeScreen extends StatelessWidget {
                             'Track your progress and unlock premium features for an extra boost. '
                             "Join our supportive community and find peace amidst life's chaos. "
                             "Ready to dive in? Let's spread some good vibes together! 🌟",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.start,
                             maxLines: 5,
                             overflow: TextOverflow.ellipsis,
@@ -369,6 +369,7 @@ class HomeScreenHeader extends StatelessWidget {
             Text(
               'App Development with Flutter and Love',
               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                fontSize: 45,
                 color: Colors.white,
                 shadows: [
                   const Shadow(
