@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:website/responsive/constants.dart';
+import 'package:website/shared/responsive/constants.dart';
 
 class ResponsivePadding extends StatelessWidget {
   const ResponsivePadding({

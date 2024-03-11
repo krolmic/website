@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:website/responsive/responsive.dart';
+import 'package:website/shared/responsive/responsive.dart';
 
 class ResponsiveRow extends StatelessWidget {
   const ResponsiveRow({
